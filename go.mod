@@ -15,7 +15,7 @@ require (
 	github.com/urfave/cli/v2 v2.27.1
 	github.com/vmihailenco/msgpack/v5 v5.4.1
 	golang.org/x/sys v0.21.0
-	nhooyr.io/websocket v1.8.11
+	nhooyr.io/websocket v1.8.17
 )
 
 require (
