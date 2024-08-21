@@ -5,7 +5,7 @@ go 1.18
 replace github.com/urfave/cli/v2 => github.com/mendersoftware/cli/v2 v2.1.1-minimal
 
 require (
-	github.com/creack/pty v1.1.21
+	github.com/creack/pty v1.1.23
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/mendersoftware/go-lib-micro v0.0.0-20240304135804-e8e39c59b148
 	github.com/pkg/errors v0.9.1
