@@ -6,7 +6,7 @@ replace github.com/urfave/cli/v2 => github.com/mendersoftware/cli/v2 v2.1.1-mini
 
 require (
 	github.com/coder/websocket v1.8.12
-	github.com/creack/pty v1.1.23
+	github.com/creack/pty v1.1.24
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/mendersoftware/go-lib-micro v0.0.0-20240808092732-904477fef2ef
 	github.com/pkg/errors v0.9.1
