@@ -11,35 +11,36 @@
 //	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //	See the License for the specific language governing permissions and
 //	limitations under the License.
-package config
+package api
 
 import (
-	"strings"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
+	"fmt"
+	"runtime"
 )
 
-func TestMenderShellVersionUnknown(t *testing.T) {
-	Version = ""
-	v := VersionString()
-	assert.Equal(t, v, VersionUnknown)
+const (
+	VersionUnknown = "unknown"
+)
+
+var (
+	// Version information of current build
+	Version string
+)
+
+func VersionString() string {
+	if Version != "" {
+		return Version
+	}
+	return VersionUnknown
 }
 
-func TestMenderShellVersion(t *testing.T) {
-	Version = "1.0"
-	v := VersionString()
-	assert.Equal(t, v, Version)
+func ShowVersion() string {
+	return fmt.Sprintf("%s\truntime: %s",
+		VersionString(), runtime.Version())
 }
 
-func TestMenderShowVersionCLI(t *testing.T) {
-	Version = "1.0"
-	err := ShowVersionCLI(nil)
-	assert.NoError(t, err)
-}
-
-func TestMenderShowVersion(t *testing.T) {
-	Version = "v1.0"
-	v := ShowVersion()
-	assert.True(t, strings.Contains(v, "v1.0"))
+func UserAgent() string {
+	return fmt.Sprintf("nt-connect/%s (%s; %s; %s)",
+		VersionString(), runtime.Version(),
+		runtime.GOOS, runtime.GOARCH)
 }

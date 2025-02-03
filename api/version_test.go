@@ -11,37 +11,30 @@
 //	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //	See the License for the specific language governing permissions and
 //	limitations under the License.
-package config
+
+package api
 
 import (
-	"fmt"
-	"runtime"
+	"strings"
+	"testing"
 
-	"github.com/urfave/cli/v2"
+	"github.com/stretchr/testify/assert"
 )
 
-const (
-	VersionUnknown = "unknown"
-)
-
-var (
-	// Version information of current build
-	Version string
-)
-
-func VersionString() string {
-	if Version != "" {
-		return Version
-	}
-	return VersionUnknown
+func TestMenderShellVersionUnknown(t *testing.T) {
+	Version = ""
+	v := VersionString()
+	assert.Equal(t, v, VersionUnknown)
 }
 
-func ShowVersionCLI(ctx *cli.Context) error {
-	fmt.Println(ShowVersion())
-	return nil
+func TestMenderShellVersion(t *testing.T) {
+	Version = "1.0"
+	v := VersionString()
+	assert.Equal(t, v, Version)
 }
 
-func ShowVersion() string {
-	return fmt.Sprintf("%s\truntime: %s",
-		VersionString(), runtime.Version())
+func TestMenderShowVersion(t *testing.T) {
+	Version = "v1.0"
+	v := ShowVersion()
+	assert.True(t, strings.Contains(v, "v1.0"))
 }
