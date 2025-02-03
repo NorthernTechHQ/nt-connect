@@ -518,20 +518,20 @@ func (d *Daemon) routeMessage(msg *ws.ProtoMsg, sock api.Socket) error {
 		Body: []byte(err.Error()),
 	}
 	if err := sock.Send(response); err != nil {
-		log.Errorf(errors.Wrap(err, "unable to send the response message").Error())
+		log.Errorf("unable to send the response message: %s", err.Error())
 	}
 	return err
 }
 
 func (d *Daemon) routeMessageResponse(response *ws.ProtoMsg, err error, sock api.Sender) {
 	if err != nil {
-		log.Errorf(err.Error())
+		log.Error(err.Error())
 		response.Header.Properties["status"] = wsshell.ErrorMessage
 		response.Body = []byte(err.Error())
 	} else if response == nil {
 		return
 	}
 	if err := sock.Send(*response); err != nil {
-		log.Errorf(errors.Wrap(err, "unable to send the response message").Error())
+		log.Errorf("unable to send the response message: %s", err.Error())
 	}
 }

@@ -239,7 +239,7 @@ func (d *Daemon) routeMessageShellResize(message *ws.ProtoMsg, sock api.Sender) 
 	s := session.GetSessionById(message.Header.SessionID)
 	if s == nil {
 		err = session.ErrSessionNotFound
-		log.Errorf(err.Error())
+		log.Error(err.Error())
 		return err
 	}
 
@@ -258,7 +258,7 @@ func (d *Daemon) routeMessagePongShell(message *ws.ProtoMsg, sock api.Sender) er
 	s := session.GetSessionById(message.Header.SessionID)
 	if s == nil {
 		err = session.ErrSessionNotFound
-		log.Errorf(err.Error())
+		log.Error(err.Error())
 		return err
 	}
 
