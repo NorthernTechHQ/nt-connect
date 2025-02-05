@@ -196,7 +196,7 @@ func (d *Daemon) StopDaemon() {
 }
 
 func (d *Daemon) outputStatus() {
-	log.Infof("nt-connect daemon v%s", config.VersionString())
+	log.Infof("nt-connect daemon v%s", api.VersionString())
 	log.Info(" status: ")
 	d.spawnedShellsMutex.Lock()
 	log.Infof("  shells: %d/%d", d.shellsSpawned, config.MaxShellsSpawned)

@@ -191,6 +191,7 @@ func (c *Client) OpenSocket(ctx context.Context, authz *api.Authz) (api.Socket, 
 		url,
 		&websocket.DialOptions{HTTPHeader: http.Header{
 			"Authorization": []string{"Bearer " + authz.Token},
+			"User-Agent":    []string{api.UserAgent()},
 		}},
 	)
 	if err != nil {

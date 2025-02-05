@@ -8,7 +8,7 @@ PKGFILES = $(shell find . \( -path ./vendor \) -prune \
 VERSION = $(shell git describe --tags --dirty)
 GOARCH ?= $(shell go env GOARCH)
 GOOS ?= $(shell go env GOOS)
-GO_LDFLAGS = -s -X github.com/northerntechhq/nt-connect/config.Version=$(VERSION)
+GO_LDFLAGS = -s -X github.com/northerntechhq/nt-connect/api.Version=$(VERSION)
 DESTDIR ?= ""
 
 prefix ?= /usr/local

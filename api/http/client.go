@@ -50,6 +50,17 @@ const (
 	apiURLInventory = "/api/devices/v1/inventory/attributes"
 )
 
+func NewRequestWithContext(
+	ctx context.Context, method, url string, body io.Reader,
+) (*http.Request, error) {
+	req, err := http.NewRequestWithContext(ctx, method, url, body)
+	if err != nil {
+		return req, err
+	}
+	req.Header.Set("User-Agent", api.UserAgent())
+	return req, err
+}
+
 // NewAuthClient returns a new AuthClient
 func NewClient(
 	cfg config.APIConfig,
@@ -87,7 +98,7 @@ func (a *HTTPClient) Authenticate(ctx context.Context) (*api.Authz, error) {
 	sig64 := base64.StdEncoding.EncodeToString(sig)
 
 	url := a.serverURL + apiURLAuth
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(bodyBytes))
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(bodyBytes))
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +143,7 @@ func (a *HTTPClient) SendInventory(ctx context.Context, authz *api.Authz, inv ap
 	bodyBytes, _ := json.Marshal(inv)
 
 	url := a.serverURL + apiURLInventory
-	req, err := http.NewRequestWithContext(ctx, http.MethodPut, url, bytes.NewReader(bodyBytes))
+	req, err := NewRequestWithContext(ctx, http.MethodPut, url, bytes.NewReader(bodyBytes))
 	if err != nil {
 		return err
 	}

@@ -15,8 +15,11 @@
 package cli
 
 import (
+	"fmt"
+
 	"github.com/urfave/cli/v2"
 
+	"github.com/northerntechhq/nt-connect/api"
 	"github.com/northerntechhq/nt-connect/config"
 )
 
@@ -26,7 +29,7 @@ func SetupCLI(args []string) error {
 		Description: "",
 		Name:        "nt-connect",
 		Usage:       "manage and start the nt-connect service.",
-		Version:     config.ShowVersion(),
+		Version:     api.ShowVersion(),
 		Commands: []*cli.Command{
 			{
 				Name:   "daemon",
@@ -58,9 +61,12 @@ func SetupCLI(args []string) error {
 				},
 			},
 			{
-				Name:   "version",
-				Usage:  "Show the version and runtime information of the binary build",
-				Action: config.ShowVersionCLI,
+				Name:  "version",
+				Usage: "Show the version and runtime information of the binary build",
+				Action: func(ctx *cli.Context) error {
+					fmt.Println(api.ShowVersion())
+					return nil
+				},
 			},
 		},
 		Flags: []cli.Flag{
