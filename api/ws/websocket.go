@@ -18,7 +18,6 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 	"sync"
@@ -117,36 +116,19 @@ func (sock *socket) receiver() {
 
 func (sock *socket) pinger() {
 	ticker := time.NewTicker(time.Minute * 30)
-	timer := time.NewTimer(0)
-	if !timer.Stop() {
-		select {
-		case <-timer.C:
-		default:
-		}
-	}
 	defer sock.Close()
 	for {
 		select {
 		case <-sock.done:
 			return
 		case <-ticker.C:
-			err := sock.conn.Ping(sock)
+			ctx, cancel := context.WithTimeout(sock, time.Second*10)
+			err := sock.conn.Ping(ctx)
+			cancel()
 			if err != nil {
 				sock.term(err)
 				return
 			}
-			// Generous deadline of 30 secs
-			timer.Reset(time.Second * 30)
-		case <-sock.pongChan:
-			if !timer.Stop() {
-				select {
-				case <-timer.C:
-				default:
-				}
-			}
-		case <-timer.C:
-			sock.term(ErrPongDeadline)
-			return
 		}
 	}
 }
@@ -158,12 +140,8 @@ func newSocket(conn *websocket.Conn) (*socket, error) {
 		done:     make(chan struct{}),
 		conn:     conn,
 	}
-	err := sock.conn.Ping(sock)
-	if err != nil {
-		return nil, fmt.Errorf("failed to connect to server: %w", err)
-	}
-	go sock.pinger()
 	go sock.receiver()
+	go sock.pinger()
 	return sock, nil
 }
 
