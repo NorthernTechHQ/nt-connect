@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:1.24.1 AS builder
+FROM --platform=$BUILDPLATFORM golang:1.24.2 AS builder
 ARG TARGETARCH TARGETOS
 
 WORKDIR /nt-connect
@@ -6,14 +6,14 @@ WORKDIR /nt-connect
 COPY . .
 
 RUN apt update \
-    && apt install -qy make
+  && apt install -qy make
 
 RUN --mount=type=cache,target=/go/pkg/mod/ \
-    --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 GOARCH=$TARGETARCH GOOS=$TARGETOS \
-    make build
+  --mount=type=cache,target=/root/.cache/go-build \
+  CGO_ENABLED=0 GOARCH=$TARGETARCH GOOS=$TARGETOS \
+  make build
 
-FROM python:3.13.2-slim
+FROM python:3.13.3-slim
 
 RUN apt update && apt install -qy iproute2
 
@@ -24,7 +24,7 @@ COPY support/inventory.sh /usr/share/nt-connect/inventory.sh
 
 
 RUN pip install -r requirements.txt \
-    && mkdir -p /var/lib/nt-connect
+  && mkdir -p /var/lib/nt-connect
 
 COPY entrypoint.py /entrypoint.py
 ENTRYPOINT ["python3", "./entrypoint.py", "daemon"]
