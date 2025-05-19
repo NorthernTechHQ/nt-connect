@@ -16,7 +16,6 @@ package ws
 
 import (
 	"context"
-	"crypto/tls"
 	"errors"
 	"net/http"
 	"strings"
@@ -174,10 +173,14 @@ func (sock *socket) Value(key any) any {
 }
 
 // Client implements only parts of the api.Client interface
-type Client struct{}
+type Client struct {
+	httpClient *http.Client
+}
 
-func NewClient(tlsConfig *tls.Config) api.SocketClient {
-	return &Client{}
+func NewClient(httpClient *http.Client) api.SocketClient {
+	return &Client{
+		httpClient: httpClient,
+	}
 }
 
 func (c *Client) OpenSocket(ctx context.Context, authz *api.Authz) (api.Socket, error) {
@@ -189,10 +192,13 @@ func (c *Client) OpenSocket(ctx context.Context, authz *api.Authz) (api.Socket, 
 	//nolint: bodyclose
 	conn, rsp, err := websocket.Dial(ctx,
 		url,
-		&websocket.DialOptions{HTTPHeader: http.Header{
-			"Authorization": []string{"Bearer " + authz.Token},
-			"User-Agent":    []string{api.UserAgent()},
-		}},
+		&websocket.DialOptions{
+			HTTPHeader: http.Header{
+				"Authorization": []string{"Bearer " + authz.Token},
+				"User-Agent":    []string{api.UserAgent()},
+			},
+			HTTPClient: c.httpClient,
+		},
 	)
 	if err != nil {
 		return nil, err
