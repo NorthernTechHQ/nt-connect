@@ -1,6 +1,6 @@
 module github.com/northerntechhq/nt-connect
 
-go 1.18
+go 1.23.0
 
 replace github.com/urfave/cli/v2 => github.com/mendersoftware/cli/v2 v2.1.1-minimal
 
@@ -15,7 +15,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/urfave/cli/v2 v2.27.4
 	github.com/vmihailenco/msgpack/v5 v5.4.1
-	golang.org/x/sys v0.31.0
+	golang.org/x/sys v0.33.0
 )
 
 require (
