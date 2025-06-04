@@ -73,15 +73,16 @@ func NewClient(
 	}
 	transport := http.DefaultTransport.(*http.Transport).Clone()
 	transport.TLSClientConfig = tlsConfig.Clone()
+	client := &http.Client{
+		Transport: transport,
+	}
 
 	var localAuth = HTTPClient{
 		serverURL:  strings.TrimRight(cfg.ServerURL, "/"),
 		PrivateKey: cfg.GetPrivateKey(),
 		Identity:   cfg.GetIdentity(),
-		client: &http.Client{
-			Transport: transport,
-		},
-		wsClient: apiws.NewClient(tlsConfig),
+		client:     client,
+		wsClient:   apiws.NewClient(client),
 	}
 	return &localAuth, nil
 }
