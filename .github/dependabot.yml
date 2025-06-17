@@ -6,13 +6,9 @@ updates:
     package-ecosystem: gomod
     schedule:
       interval: monthly
-    reviewers:
-      - "NorthernTechHQ/alvaldi-maintainers"
   - commit-message:
       prefix: "chore"
     directory: /
     package-ecosystem: docker
     schedule:
       interval: monthly
-    reviewers:
-      - "NorthernTechHQ/alvaldi-maintainers"
