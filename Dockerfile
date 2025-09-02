@@ -13,7 +13,7 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
   CGO_ENABLED=0 GOARCH=$TARGETARCH GOOS=$TARGETOS \
   make build
 
-FROM python:3.13.5-slim
+FROM python:3.13.7-slim
 
 RUN apt update && apt install -qy iproute2
 
