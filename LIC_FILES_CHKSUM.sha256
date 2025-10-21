@@ -14,7 +14,7 @@
 #
 # ISC
 1b93a317849ee09d3d7e4f1d20c2b78ddb230b4becb12d7c224c927b9d470251  vendor/github.com/davecgh/go-spew/LICENSE
-0b12dba478a73e88a239b33a23aad4721ad692d70d428130c2e2064bf9c5aa60  vendor/github.com/coder/websocket/LICENSE.txt
+cc0975a5f6305145bdd7b41ce9479632fdac3870e6ac4281f28017f18c767c4e  vendor/github.com/coder/websocket/LICENSE.txt
 #
 # MIT
 a2a1cea59d9c2d71908082f516f86bb560abf857646ecf69d70c121ead14aef4  vendor/github.com/creack/pty/LICENSE

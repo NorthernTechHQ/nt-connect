@@ -1,21 +1,21 @@
 module github.com/northerntechhq/nt-connect
 
-go 1.23.0
+go 1.24.0
 
 replace github.com/urfave/cli/v2 => github.com/mendersoftware/cli/v2 v2.1.1-minimal
 
 require (
-	github.com/coder/websocket v1.8.13
+	github.com/coder/websocket v1.8.14
 	github.com/creack/pty v1.1.24
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
-	github.com/mendersoftware/go-lib-micro v0.0.0-20240808092732-904477fef2ef
+	github.com/mendersoftware/go-lib-micro v0.0.0-20250620123909-c9fc306420c6
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.11.1
-	github.com/urfave/cli/v2 v2.27.4
+	github.com/urfave/cli/v2 v2.27.7
 	github.com/vmihailenco/msgpack/v5 v5.4.1
-	golang.org/x/sys v0.35.0
+	golang.org/x/sys v0.37.0
 )
 
 require (
