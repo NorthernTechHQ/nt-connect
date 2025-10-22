@@ -1,0 +1,11 @@
+github.com/coder/websocket,ISC
+github.com/creack/pty,MIT
+github.com/go-ozzo/ozzo-validation/v4,MIT
+github.com/northerntechhq/nt-connect,Apache-2.0
+github.com/pkg/errors,BSD-2-Clause
+github.com/sirupsen/logrus,MIT
+github.com/urfave/cli/v2,MIT
+github.com/vmihailenco/msgpack/v5,BSD-2-Clause
+github.com/vmihailenco/tagparser/v2,BSD-2-Clause
+golang.org/x/sys/unix,BSD-3-Clause
+
