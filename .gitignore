@@ -4,3 +4,4 @@ nt-connect
 coverage.txt
 .venv
 /dist
+vendor
