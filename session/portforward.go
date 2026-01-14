@@ -19,7 +19,6 @@ import (
 	"io"
 	"net"
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/mendersoftware/go-lib-micro/ws"
@@ -52,7 +51,6 @@ type PortForwarder struct {
 	closed         bool
 	ctx            context.Context
 	ctxCancel      context.CancelFunc
-	mutexAck       *sync.Mutex
 	portForwarders map[string]*PortForwarder
 }
 
@@ -147,9 +145,6 @@ func (f *PortForwarder) Read() {
 		case data := <-dataChan:
 			log.Debugf("port-forward[%s/%s] read %d bytes", f.SessionID, f.ConnectionID, len(data))
 
-			// lock the ack mutex, we don't allow more than one in-flight message
-			f.mutexAck.Lock()
-
 			m := ws.ProtoMsg{
 				Header: ws.ProtoHdr{
 					Proto:     ws.ProtoTypePortForward,
@@ -210,7 +205,7 @@ func (h *PortForwardHandler) ServeProtoMsg(msg *ws.ProtoMsg, w api.Sender) {
 	case wspf.MessageTypePortForward:
 		err = h.portForwardHandlerForward(msg, w)
 	case wspf.MessageTypePortForwardAck:
-		err = h.portForwardHandlerAck(msg, w)
+
 	default:
 		err = errPortForwardUnkonwnMessageType
 	}
@@ -261,7 +256,6 @@ func (h *PortForwardHandler) portForwardHandlerNew(message *ws.ProtoMsg, w api.S
 		SessionID:      message.Header.SessionID,
 		ConnectionID:   connectionID,
 		Sender:         w,
-		mutexAck:       &sync.Mutex{},
 		portForwarders: h.portForwarders,
 	}
 
@@ -352,19 +346,4 @@ func (h *PortForwardHandler) portForwardHandlerForward(
 	} else {
 		return errPortForwardUnkonwnConnection
 	}
-}
-
-func (h *PortForwardHandler) portForwardHandlerAck(message *ws.ProtoMsg, w api.Sender) error {
-	connectionID, _ := message.Header.Properties[wspf.PropertyConnectionID].(string)
-	if portForwarder, ok := h.portForwarders[connectionID]; ok {
-		// unlock the ack mutex, do not panic if it is not locked
-		defer func() {
-			if r := recover(); r != nil {
-				log.Errorf("portForwardHandlerAck: recover(%+v)", r)
-			}
-		}()
-		portForwarder.mutexAck.Unlock()
-		return nil
-	}
-	return errPortForwardUnkonwnConnection
 }
