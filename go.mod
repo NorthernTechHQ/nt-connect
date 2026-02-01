@@ -11,7 +11,7 @@ require (
 	github.com/mendersoftware/go-lib-micro v0.0.0-20250620123909-c9fc306420c6
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/sirupsen/logrus v1.9.3
+	github.com/sirupsen/logrus v1.9.4
 	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/vmihailenco/msgpack/v5 v5.4.1
