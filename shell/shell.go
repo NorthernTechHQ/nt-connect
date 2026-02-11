@@ -61,6 +61,12 @@ func ExecuteShell(uid uint32,
 	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=%s", homeDir))
 	cmd.Env = append(cmd.Env, fmt.Sprintf("TERM=%s", termString))
 
+	log.Info("using script command to start shell")
+	cmd_wrapper := exec.Command("script", "-qec", shell, "/dev/null")
+	cmd_wrapper.SysProcAttr = cmd.SysProcAttr
+	cmd_wrapper.Dir = cmd.Dir
+	cmd_wrapper.Env = cmd.Env
+	cmd = cmd_wrapper
 	pseudoTTY, err = pty.Start(cmd)
 	if err != nil {
 		return -1, nil, nil, err
