@@ -108,7 +108,6 @@ func TestPipeStdout(t *testing.T) {
 		sock:      sock,
 		sessionId: "unit-tests-sessions-id",
 		r:         devNull{},
-		w:         devNull{},
 		running:   false,
 	}
 

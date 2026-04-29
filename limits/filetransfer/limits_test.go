@@ -52,10 +52,8 @@ func TestGetCounters(t *testing.T) {
 
 func TestUpdateCounters(t *testing.T) {
 	deviceCounters = Counters{
-		bytesTransferred:           0,
-		bytesReceived:              0,
-		bytesTransferredLastUpdate: time.Now(),
-		bytesReceivedLastUpdate:    time.Now(),
+		bytesTransferred: 0,
+		bytesReceived:    0,
 	}
 	countersUpdateSleepTimeS = 5
 

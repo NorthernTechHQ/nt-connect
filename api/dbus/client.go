@@ -38,7 +38,6 @@ const (
 // Authentication Manager which communicates using DBUS
 type ClientDBus struct {
 	dbusAPI          dbus.DBusAPI
-	dbusConnection   dbus.Handle
 	authManagerProxy dbus.Handle
 	wsClient         api.SocketClient
 }
@@ -72,7 +71,6 @@ func NewClient(
 	}
 	return &ClientDBus{
 		dbusAPI:          dbusAPI,
-		dbusConnection:   dbusConnection,
 		authManagerProxy: authManagerProxy,
 		wsClient:         ws.NewClient(nil),
 	}, nil

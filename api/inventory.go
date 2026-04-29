@@ -64,7 +64,7 @@ func (inv Inventory) Digest() []byte {
 	sort.Strings(keys)
 	for _, key := range keys {
 		for _, value := range inv[key] {
-			_, _ = hash.Write([]byte(fmt.Sprintf("%s=%s\n", key, value)))
+			fmt.Fprintf(hash, "%s=%s\n", key, value)
 		}
 	}
 	return hash.Sum(nil)

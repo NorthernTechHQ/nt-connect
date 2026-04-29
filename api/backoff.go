@@ -52,6 +52,7 @@ var _ Client = &expBackoff{}
 func (a *expBackoff) incBackoff() {
 	a.mu.Lock()
 	defer a.mu.Unlock()
+	//nolint:gosec // math/rand is good enough for jitter
 	jitter := time.Duration((1 - rand.Float64()/2) * float64(backOffMin))
 	if a.backoffDuration > backoffMax {
 		a.backoffDuration = backoffMax
