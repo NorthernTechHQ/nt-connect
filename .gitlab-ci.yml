@@ -23,18 +23,18 @@ variables:
   GITHUB_STATUS_API_URL: "https://api.github.com/repos/NorthernTechHQ/$CI_PROJECT_NAME/statuses/$CI_COMMIT_SHA"
 
 include:
-  - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-check-golang-lint.yml'
-  - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-check-golang-unittests-v2.yml'
-  - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-check-commits.yml'
-  - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-check-license.yml'
-  - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-github-status-updates.yml'
-  - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-check-docker-build.yml'
+  - project: "Northern.tech/Mender/mendertesting"
+    file: ".gitlab-ci-check-golang-lint.yml"
+  - project: "Northern.tech/Mender/mendertesting"
+    file: ".gitlab-ci-check-golang-unittests-v2.yml"
+  - project: "Northern.tech/Mender/mendertesting"
+    file: ".gitlab-ci-check-commits.yml"
+  - project: "Northern.tech/Mender/mendertesting"
+    file: ".gitlab-ci-check-license.yml"
+  - project: "Northern.tech/Mender/mendertesting"
+    file: ".gitlab-ci-github-status-updates.yml"
+  - project: "Northern.tech/Mender/mendertesting"
+    file: ".gitlab-ci-check-docker-build.yml"
 
 build:docker:
   rules:
@@ -83,6 +83,14 @@ publish:image:saas:
     - when: never
   script: ["true"]
 
+test:static:
+  stage: test
+  needs: []
+  image: "golangci/golangci-lint:v2.11.4"
+  script:
+    - cd backend
+    - golangci-lint run -v
+
 trigger:saas:sync-staging-component:
   rules:
     - when: never
@@ -90,7 +98,7 @@ trigger:saas:sync-staging-component:
 
 build:docker-multiplatform:
   rules:
-    - if: '$CI_COMMIT_REF_NAME =~ /^(main|staging)$/'
+    - if: "$CI_COMMIT_REF_NAME =~ /^(main|staging)$/"
       when: always
     - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?/'
       when: always
@@ -99,7 +107,7 @@ build:docker-multiplatform:
 
 publish:docker-multiplatform:
   rules:
-    - if: '$CI_COMMIT_REF_NAME =~ /^(main|staging)$/'
+    - if: "$CI_COMMIT_REF_NAME =~ /^(main|staging)$/"
       when: always
     - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?/'
       when: manual
@@ -142,7 +150,6 @@ publish:docker-multiplatform:
               "docker://${DOCKER_REPOSITORY}:${CI_COMMIT_REF_NAME}"
       fi
   artifacts: {}
-
 
 test:unit:
   image: "golang:${GOLANG_VERSION}"
