@@ -7,7 +7,7 @@ stages:
   - trigger
 
 variables:
-  GO_VERSION:
+  GOLANG_VERSION:
     description: "The version of the image: `docker.io/library/golang` to use for testing"
     value: "1.24.2"
   SKOPEO_VERSION:
@@ -42,7 +42,7 @@ build:docker:
   script: ["true"]
 
 build:archive:
-  image: "golang:${GO_VERSION}"
+  image: "golang:${GOLANG_VERSION}"
   variables:
     GIT_STRATEGY: clone
     GIT_DEPTH: 0
@@ -145,7 +145,7 @@ publish:docker-multiplatform:
 
 
 test:unit:
-  image: "golang:${GO_VERSION}"
+  image: "golang:${GOLANG_VERSION}"
   stage: test
   before_script:
     - apt-get -qq update && apt-get install -yq $(cat deb-requirements.txt)
