@@ -83,6 +83,13 @@ publish:image:saas:
     - when: never
   script: ["true"]
 
+test:static:
+  stage: test
+  needs: []
+  image: "golangci/golangci-lint:v2.11.4"
+  script:
+    - golangci-lint run
+
 trigger:saas:sync-staging-component:
   rules:
     - when: never
