@@ -35,7 +35,6 @@ type Shell struct {
 	sock      api.Sender
 	sessionId string
 	r         io.Reader
-	w         io.Writer
 	running   bool
 }
 
@@ -48,7 +47,6 @@ func NewShell(sock api.Sender, sessionId string, r io.Reader, w io.Writer) *Shel
 		sock:      sock,
 		sessionId: sessionId,
 		r:         r,
-		w:         w,
 		running:   false,
 	}
 	return &shell

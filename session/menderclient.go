@@ -37,14 +37,6 @@ func MenderClient() Constructor {
 	return func() SessionHandler { return f }
 }
 
-var runCommand = func(command []string) error {
-	if len(command) > 0 {
-		cmd := exec.Command(command[0], command[1:]...)
-		return cmd.Run()
-	}
-	return errors.New("no command provided")
-}
-
 func menderClientHandler(message *ws.ProtoMsg, w api.Sender) {
 	command := ""
 	switch message.Header.MsgType {
@@ -55,7 +47,7 @@ func menderClientHandler(message *ws.ProtoMsg, w api.Sender) {
 	}
 	var err error
 	if command != "" {
-		err = runCommand([]string{"mender", command})
+		err = exec.Command("mender", command).Run()
 	} else {
 		err = errors.New("unknown message type")
 	}

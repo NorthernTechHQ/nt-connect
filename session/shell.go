@@ -92,13 +92,8 @@ type TerminalSession struct {
 	activeAt time.Time
 	//status of the session
 	status SessionStatus
-	//terminal settings, for reference, usually it does not change
-	//in theory size of the terminal can change
-	terminal TerminalSettings
 	//the pid of the shell process mainly used for stopping the shell
 	shellPid int
-	//reader and writer are connected to the terminal stdio where the shell is running
-	reader io.Reader
 	//reader and writer are connected to the terminal stdio where the shell is running
 	writer    io.Writer
 	pseudoTTY *os.File
@@ -351,10 +346,8 @@ func (s *TerminalSession) StartShell(
 	s.shell.Start()
 
 	s.shellPid = pid
-	s.reader = pseudoTTY
 	s.writer = pseudoTTY
 	s.status = SessionStatusActive
-	s.terminal = terminal
 	s.pseudoTTY = pseudoTTY
 	s.command = cmd
 	s.activeAt = timeNow()
@@ -463,7 +456,6 @@ func (s *TerminalSession) StopShell() (err error) {
 
 	close(s.stop)
 	s.shell.Stop()
-	s.terminal = TerminalSettings{}
 	s.status = SessionStatusEmpty
 
 	p, err := os.FindProcess(s.shellPid)
