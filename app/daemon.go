@@ -67,7 +67,6 @@ type Daemon struct {
 	config.TerminalConfig
 	config.FileTransferConfig
 	config.PortForwardConfig
-	config.MenderClientConfig
 	Chroot string
 }
 
@@ -84,9 +83,6 @@ func newDaemon(conf *config.NTConnectConfig) *Daemon {
 	}
 	if !conf.PortForward.Disable {
 		routes[ws.ProtoTypePortForward] = session.PortForward()
-	}
-	if !conf.MenderClient.Disable {
-		routes[ws.ProtoTypeMenderClient] = session.MenderClient()
 	}
 	router := session.NewRouter(
 		routes, session.Config{
@@ -106,7 +102,6 @@ func newDaemon(conf *config.NTConnectConfig) *Daemon {
 		TerminalConfig:          conf.Terminal,
 		FileTransferConfig:      conf.FileTransfer,
 		PortForwardConfig:       conf.PortForward,
-		MenderClientConfig:      conf.MenderClient,
 		Chroot:                  conf.Chroot,
 		shellsSpawned:           0,
 		debug:                   conf.Debug,
