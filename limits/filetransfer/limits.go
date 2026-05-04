@@ -47,12 +47,10 @@ var (
 )
 
 type Counters struct {
-	bytesTransferred           uint64
-	bytesReceived              uint64
-	bytesTransferredAvg1m      float64
-	bytesReceivedAvg1m         float64
-	bytesTransferredLastUpdate time.Time
-	bytesReceivedLastUpdate    time.Time
+	bytesTransferred      uint64
+	bytesReceived         uint64
+	bytesTransferredAvg1m float64
+	bytesReceivedAvg1m    float64
 }
 
 type Permit struct {
@@ -64,10 +62,8 @@ type Permit struct {
 
 var countersMutex = &sync.Mutex{}
 var deviceCounters = Counters{
-	bytesTransferred:           0,
-	bytesReceived:              0,
-	bytesTransferredLastUpdate: time.Now(),
-	bytesReceivedLastUpdate:    time.Now(),
+	bytesTransferred: 0,
+	bytesReceived:    0,
 }
 var counterUpdateRunning = false
 var counterUpdateStarted = make(chan bool, 1)
@@ -80,10 +76,8 @@ func NewPermit(config config.Limits) *Permit {
 	return &Permit{
 		limits: config,
 		counters: Counters{
-			bytesTransferred:           0,
-			bytesReceived:              0,
-			bytesTransferredLastUpdate: time.Now().UTC(),
-			bytesReceivedLastUpdate:    time.Now().UTC(),
+			bytesTransferred: 0,
+			bytesReceived:    0,
 		},
 		// mutex to protect the writes and reads of the Counters
 		countersMutex: &sync.Mutex{},

@@ -45,11 +45,6 @@ type TerminalConfig struct {
 	Disable bool
 }
 
-type MenderClientConfig struct {
-	// Disable mender-client websocket bindings.
-	Disable bool
-}
-
 type FileTransferConfig struct {
 	// Disable file transfer features
 	Disable bool
@@ -145,9 +140,7 @@ type NTConnectConfigFromFile struct {
 	TLS TLSConfig `json:"TLS,omitempty"`
 	// APIConfig
 	APIConfig APIConfig `json:"API,omitempty"`
-	// MenderClient config
-	MenderClient MenderClientConfig
-	Chroot       string `json:"Chroot,omitempty"`
+	Chroot    string    `json:"Chroot,omitempty"`
 }
 
 type TLSConfig struct {

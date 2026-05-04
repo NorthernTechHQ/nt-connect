@@ -30,13 +30,12 @@ import (
 )
 
 type socket struct {
-	msgChan  chan ws.ProtoMsg
-	err      error
-	pongChan chan struct{}
-	done     chan struct{}
-	mu       sync.Mutex
-	writeMu  sync.Mutex
-	conn     *websocket.Conn
+	msgChan chan ws.ProtoMsg
+	err     error
+	done    chan struct{}
+	mu      sync.Mutex
+	writeMu sync.Mutex
+	conn    *websocket.Conn
 }
 
 func (sock *socket) ReceiveChan() <-chan ws.ProtoMsg {
@@ -134,10 +133,9 @@ func (sock *socket) pinger() {
 
 func newSocket(conn *websocket.Conn) (*socket, error) {
 	sock := &socket{
-		msgChan:  make(chan ws.ProtoMsg),
-		pongChan: make(chan struct{}, 1),
-		done:     make(chan struct{}),
-		conn:     conn,
+		msgChan: make(chan ws.ProtoMsg),
+		done:    make(chan struct{}),
+		conn:    conn,
 	}
 	go sock.receiver()
 	go sock.pinger()

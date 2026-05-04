@@ -25,10 +25,7 @@ variables:
 include:
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-check-golang-lint.yml'
-  - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-check-golang-unittests-v2.yml'
-  - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-check-commits.yml'
+  - component: "gitlab.com/Northern.tech/Mender/mendertesting/commit-lint@master"
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-check-license.yml'
   - project: 'Northern.tech/Mender/mendertesting'
@@ -82,6 +79,13 @@ publish:image:saas:
   rules:
     - when: never
   script: ["true"]
+
+test:static:
+  stage: test
+  needs: []
+  image: "golangci/golangci-lint:v2.11.4"
+  script:
+    - golangci-lint run
 
 trigger:saas:sync-staging-component:
   rules:
@@ -151,3 +155,25 @@ test:unit:
     - apt-get -qq update && apt-get install -yq $(cat deb-requirements.txt)
     # start the dbus service
     - service dbus start
+  script:
+    - go test -cover -covermode atomic -coverprofile coverage.txt ./...
+  artifacts:
+    paths:
+      - coverage.txt
+    when: on_success
+    expire_in: 7 days
+
+publish:unit:
+  image: "golang:${GOLANG_VERSION}"
+  stage: publish
+  rules:
+    - allow_failure: true
+  needs:
+    - job: test:unit
+      artifacts: true
+  before_script:
+    - wget https://github.com/coverallsapp/coverage-reporter/releases/latest/download/{coveralls-linux-$(uname -m).tar.gz,coveralls-checksums.txt}
+    - grep "coveralls-linux-$(uname -m).tar.gz" coveralls-checksums.txt | sha256sum -c
+    - tar -xz -C /usr/bin -f "coveralls-linux-$(uname -m).tar.gz"
+  script:
+    - coveralls report --job-flag=unittests --service-name=gitlab --format=golang coverage.txt

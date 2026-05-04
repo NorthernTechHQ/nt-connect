@@ -46,11 +46,9 @@ type Daemon struct {
 	spawnedShellsMutex      sync.Mutex
 	done                    chan struct{}
 	signal                  chan os.Signal
-	authorized              bool
 	username                string
 	shellCommand            string
 	shellArguments          []string
-	deviceConnectUrl        string
 	sessionSweepTicker      <-chan time.Time
 	inventoryTicker         <-chan time.Time
 	inventoryDigest         []byte
@@ -69,7 +67,6 @@ type Daemon struct {
 	config.TerminalConfig
 	config.FileTransferConfig
 	config.PortForwardConfig
-	config.MenderClientConfig
 	Chroot string
 }
 
@@ -87,9 +84,6 @@ func newDaemon(conf *config.NTConnectConfig) *Daemon {
 	if !conf.PortForward.Disable {
 		routes[ws.ProtoTypePortForward] = session.PortForward()
 	}
-	if !conf.MenderClient.Disable {
-		routes[ws.ProtoTypeMenderClient] = session.MenderClient()
-	}
 	router := session.NewRouter(
 		routes, session.Config{
 			IdleTimeout: time.Second * 10,
@@ -98,19 +92,16 @@ func newDaemon(conf *config.NTConnectConfig) *Daemon {
 
 	daemon := &Daemon{
 		done:                    make(chan struct{}),
-		authorized:              false,
 		username:                conf.User,
 		shellCommand:            conf.ShellCommand,
 		shellArguments:          conf.ShellArguments,
 		expireSessionsAfter:     time.Second * time.Duration(conf.Sessions.ExpireAfter),
 		expireSessionsAfterIdle: time.Second * time.Duration(conf.Sessions.ExpireAfterIdle),
 		inventoryExecutable:     conf.APIConfig.InventoryExecutable,
-		deviceConnectUrl:        config.DefaultDeviceConnectPath,
 		terminalString:          config.DefaultTerminalString,
 		TerminalConfig:          conf.Terminal,
 		FileTransferConfig:      conf.FileTransfer,
 		PortForwardConfig:       conf.PortForward,
-		MenderClientConfig:      conf.MenderClient,
 		Chroot:                  conf.Chroot,
 		shellsSpawned:           0,
 		debug:                   conf.Debug,
@@ -321,6 +312,7 @@ func (l logFunc) Write(b []byte) (int, error) {
 
 func (d *Daemon) dispatchInventory(ctx context.Context, authz *api.Authz) (err error) {
 	log.Debug("running inventory script")
+	//nolint:gosec // Ignore G204 since the script is meant to be configurable
 	cmd := exec.CommandContext(ctx, d.inventoryExecutable)
 	var buf bytes.Buffer
 	logger := func(s string) {
