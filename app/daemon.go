@@ -83,6 +83,7 @@ func newDaemon(conf *config.NTConnectConfig) *Daemon {
 	}
 	if !conf.PortForward.Disable {
 		routes[ws.ProtoTypePortForward] = session.PortForward()
+		routes[ws.ProtoTypePortForwardV2] = session.PortForwardV2()
 	}
 	router := session.NewRouter(
 		routes, session.Config{
