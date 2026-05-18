@@ -16,6 +16,7 @@ package session
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net"
 	"strconv"
@@ -45,6 +46,7 @@ var (
 )
 
 type PortForwarder struct {
+	proto          ws.ProtoType
 	SessionID      string
 	ConnectionID   string
 	Sender         api.Sender
@@ -94,7 +96,7 @@ func (f *PortForwarder) Close(sendStopMessage bool) error {
 	if sendStopMessage {
 		m := ws.ProtoMsg{
 			Header: ws.ProtoHdr{
-				Proto:     ws.ProtoTypePortForward,
+				Proto:     f.proto,
 				MsgType:   wspf.MessageTypePortForwardStop,
 				SessionID: f.SessionID,
 				Properties: map[string]interface{}{
@@ -147,12 +149,14 @@ func (f *PortForwarder) Read() {
 		case data := <-dataChan:
 			log.Debugf("port-forward[%s/%s] read %d bytes", f.SessionID, f.ConnectionID, len(data))
 
-			// lock the ack mutex, we don't allow more than one in-flight message
-			f.mutexAck.Lock()
+			if f.proto == ws.ProtoTypePortForward {
+				// lock the ack mutex, we don't allow more than one in-flight message
+				f.mutexAck.Lock()
+			}
 
 			m := ws.ProtoMsg{
 				Header: ws.ProtoHdr{
-					Proto:     ws.ProtoTypePortForward,
+					Proto:     f.proto,
 					MsgType:   wspf.MessageTypePortForward,
 					SessionID: f.SessionID,
 					Properties: map[string]interface{}{
@@ -183,36 +187,62 @@ func (f *PortForwarder) Write(body []byte) error {
 
 type PortForwardHandler struct {
 	portForwarders map[string]*PortForwarder
+	proto          ws.ProtoType
 }
 
 func PortForward() Constructor {
 	return func() SessionHandler {
 		return &PortForwardHandler{
 			portForwarders: make(map[string]*PortForwarder),
+			proto:          ws.ProtoTypePortForward,
+		}
+	}
+}
+
+func PortForwardV2() Constructor {
+	return func() SessionHandler {
+		return &PortForwardHandler{
+			portForwarders: make(map[string]*PortForwarder),
+			proto:          ws.ProtoTypePortForwardV2,
 		}
 	}
 }
 
 func (h *PortForwardHandler) Close() error {
+	var errs Errors
 	for _, f := range h.portForwarders {
-		f.Close(false)
+		err := f.Close(false)
+		if err != nil {
+			errs = append(errs, err)
+		}
+	}
+	if len(errs) > 0 {
+		return errs
 	}
 	return nil
 }
 
 func (h *PortForwardHandler) ServeProtoMsg(msg *ws.ProtoMsg, w api.Sender) {
 	var err error
-	switch msg.Header.MsgType {
-	case wspf.MessageTypePortForwardNew:
-		err = h.portForwardHandlerNew(msg, w)
-	case wspf.MessageTypePortForwardStop:
-		err = h.portForwardHandlerStop(msg, w)
-	case wspf.MessageTypePortForward:
-		err = h.portForwardHandlerForward(msg, w)
-	case wspf.MessageTypePortForwardAck:
-		err = h.portForwardHandlerAck(msg, w)
-	default:
-		err = errPortForwardUnkonwnMessageType
+	if msg.Header.Proto == h.proto {
+		switch msg.Header.MsgType {
+		case wspf.MessageTypePortForwardNew:
+			err = h.portForwardHandlerNew(msg, w)
+		case wspf.MessageTypePortForwardStop:
+			err = h.portForwardHandlerStop(msg, w)
+		case wspf.MessageTypePortForward:
+			err = h.portForwardHandlerForward(msg, w)
+		case wspf.MessageTypePortForwardAck:
+			if h.proto == ws.ProtoTypePortForward {
+				err = h.portForwardHandlerAck(msg, w)
+				break
+			}
+			fallthrough // For v2 this is an unknown message type
+		default:
+			err = errPortForwardUnkonwnMessageType
+		}
+	} else {
+		err = fmt.Errorf("invalid protocol ID %d in request header", msg.Header.Proto)
 	}
 	if err != nil {
 		log.Errorf("portForwardHandler(%+v)", err)
@@ -227,7 +257,7 @@ func (h *PortForwardHandler) ServeProtoMsg(msg *ws.ProtoMsg, w api.Sender) {
 		}
 		response := ws.ProtoMsg{
 			Header: ws.ProtoHdr{
-				Proto:     ws.ProtoTypePortForward,
+				Proto:     h.proto,
 				MsgType:   wspf.MessageTypeError,
 				SessionID: msg.Header.SessionID,
 			},
@@ -258,6 +288,7 @@ func (h *PortForwardHandler) portForwardHandlerNew(message *ws.ProtoMsg, w api.S
 	}
 
 	portForwarder := &PortForwarder{
+		proto:          h.proto,
 		SessionID:      message.Header.SessionID,
 		ConnectionID:   connectionID,
 		Sender:         w,
@@ -334,19 +365,19 @@ func (h *PortForwardHandler) portForwardHandlerForward(
 	connectionID, _ := message.Header.Properties[wspf.PropertyConnectionID].(string)
 	if portForwarder, ok := h.portForwarders[connectionID]; ok {
 		err := portForwarder.Write(message.Body)
-		// send ack
-		response := ws.ProtoMsg{
-			Header: ws.ProtoHdr{
-				Proto:     message.Header.Proto,
-				MsgType:   wspf.MessageTypePortForwardAck,
-				SessionID: message.Header.SessionID,
-				Properties: map[string]interface{}{
-					wspf.PropertyConnectionID: connectionID,
+		if h.proto == ws.ProtoTypePortForward && err == nil {
+			// send ack
+			response := &ws.ProtoMsg{
+				Header: ws.ProtoHdr{
+					Proto:     message.Header.Proto,
+					MsgType:   wspf.MessageTypePortForwardAck,
+					SessionID: message.Header.SessionID,
+					Properties: map[string]interface{}{
+						wspf.PropertyConnectionID: connectionID,
+					},
 				},
-			},
-		}
-		if err := w.Send(response); err != nil {
-			log.Errorf("portForwardHandler: webSock.WriteMessage(%+v)", err)
+			}
+			err = w.Send(*response)
 		}
 		return err
 	} else {
@@ -363,7 +394,9 @@ func (h *PortForwardHandler) portForwardHandlerAck(message *ws.ProtoMsg, w api.S
 				log.Errorf("portForwardHandlerAck: recover(%+v)", r)
 			}
 		}()
-		portForwarder.mutexAck.Unlock()
+		if h.proto == ws.ProtoTypePortForward {
+			portForwarder.mutexAck.Unlock()
+		}
 		return nil
 	}
 	return errPortForwardUnkonwnConnection
