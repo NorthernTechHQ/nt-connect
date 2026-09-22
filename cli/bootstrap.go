@@ -25,7 +25,7 @@ import (
 	"strings"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
 	"github.com/northerntechhq/nt-connect/api"
 	"github.com/northerntechhq/nt-connect/config"
@@ -102,7 +102,7 @@ func bootstrapHTTP(
 	return err
 }
 
-func bootstrap(c *cli.Context, cfg *config.NTConnectConfig) error {
+func bootstrap(c *cli.Command, cfg *config.NTConnectConfig) error {
 	var err error
 	switch cfg.APIConfig.APIType {
 	case config.APITypeHTTP:
