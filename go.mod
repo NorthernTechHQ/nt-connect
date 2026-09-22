@@ -2,8 +2,6 @@ module github.com/northerntechhq/nt-connect
 
 go 1.26.0
 
-replace github.com/urfave/cli/v2 => github.com/mendersoftware/cli/v2 v2.1.1-minimal
-
 require (
 	github.com/coder/websocket v1.8.15
 	github.com/creack/pty v1.1.24
@@ -13,7 +11,7 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.10.2
 	github.com/stretchr/testify v1.12.1
-	github.com/urfave/cli/v2 v2.27.7
+	github.com/urfave/cli/v3 v3.13.0
 	github.com/vmihailenco/msgpack/v5 v5.4.1
 	golang.org/x/sys v0.48.0
 )

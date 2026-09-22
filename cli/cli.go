@@ -15,9 +15,10 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
 	"github.com/northerntechhq/nt-connect/api"
 	"github.com/northerntechhq/nt-connect/config"
@@ -25,7 +26,7 @@ import (
 
 func SetupCLI(args []string) error {
 	runOptions := &runOptionsType{}
-	app := &cli.App{
+	app := cli.Command{
 		Description: "",
 		Name:        "nt-connect",
 		Usage:       "manage and start the nt-connect service.",
@@ -63,7 +64,7 @@ func SetupCLI(args []string) error {
 			{
 				Name:  "version",
 				Usage: "Show the version and runtime information of the binary build",
-				Action: func(ctx *cli.Context) error {
+				Action: func(ctx context.Context, cmd *cli.Command) error {
 					fmt.Println(api.ShowVersion())
 					return nil
 				},
@@ -90,7 +91,7 @@ func SetupCLI(args []string) error {
 				Usage:       "Set the logging level to debug",
 				Value:       config.DefaultDebug,
 				Destination: &runOptions.debug,
-				EnvVars:     []string{"LOG_DEBUG"},
+				Sources:     cli.EnvVars("LOG_DEBUG"),
 			},
 			&cli.BoolFlag{
 				Name:        "trace",
@@ -98,15 +99,15 @@ func SetupCLI(args []string) error {
 				Usage:       "Set the logging level to trace",
 				Value:       config.DefaultTrace,
 				Destination: &runOptions.trace,
-				EnvVars:     []string{"LOG_TRACE"},
+				Sources:     cli.EnvVars("LOG_TRACE"),
 			},
 		},
 	}
 
-	return app.Run(args)
+	return app.Run(context.Background(), args)
 }
 
-func (runOptions *runOptionsType) handleCLIOptions(ctx *cli.Context) error {
+func (runOptions *runOptionsType) handleCLIOptions(ctx context.Context, cmd *cli.Command) error {
 	// Handle cfg flags
 	cfg, err := config.LoadConfig(runOptions.config, runOptions.fallbackConfig)
 	if err != nil {
@@ -116,7 +117,7 @@ func (runOptions *runOptionsType) handleCLIOptions(ctx *cli.Context) error {
 	cfg.Debug = runOptions.debug
 	cfg.Trace = runOptions.trace
 
-	switch ctx.Command.Name {
+	switch cmd.Name {
 	case "daemon":
 		err = cfg.Validate()
 		if err != nil {
@@ -128,9 +129,9 @@ func (runOptions *runOptionsType) handleCLIOptions(ctx *cli.Context) error {
 		}
 		return runDaemon(d)
 	case "bootstrap":
-		return bootstrap(ctx, cfg)
+		return bootstrap(cmd, cfg)
 	default:
-		cli.ShowAppHelpAndExit(ctx, 1)
+		cli.ShowAppHelpAndExit(cmd, 1)
 	}
 	return nil
 }
