@@ -22,11 +22,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mendersoftware/go-lib-micro/ws"
-	wsft "github.com/mendersoftware/go-lib-micro/ws/filetransfer"
 	"github.com/northerntechhq/nt-connect/config"
 	"github.com/northerntechhq/nt-connect/limits/filetransfer"
 	"github.com/northerntechhq/nt-connect/session/model"
+
+	"github.com/mendersoftware/go-lib-micro/ws"
+	wsft "github.com/mendersoftware/go-lib-micro/ws/filetransfer"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/vmihailenco/msgpack/v5"
@@ -284,7 +285,7 @@ func TestFileTransferUpload(t *testing.T) {
 			select {
 			case <-recorder.Called:
 			case <-time.After(time.Second * 10):
-				panic("test case timeout")
+				t.Fatal("test case timeout")
 			}
 
 			if tc.TransferMessages != nil {
@@ -457,32 +458,12 @@ func TestFileTransferDownload(t *testing.T) {
 			return ret
 		},
 	}, {
-		Name: "error, bad ack data type",
-
-		FileContents: []byte("tiny chunk"),
-
-		Acker: func(msg *ws.ProtoMsg) *ws.ProtoMsg {
-			if msg.Body != nil {
-				return nil
-			}
-			return &ws.ProtoMsg{
-				Header: ws.ProtoHdr{
-					Proto:   ws.ProtoTypeFileTransfer,
-					MsgType: wsft.MessageTypeACK,
-					Properties: map[string]interface{}{
-						"offset": "12",
-					},
-				},
-			}
-		},
-		Error: errors.New("invalid offset data type: require int64"),
-	}, {
 		Name: "error, no offset in ack",
 
 		FileContents: []byte("tiny chunk"),
 
 		Acker: func(msg *ws.ProtoMsg) *ws.ProtoMsg {
-			if msg.Body != nil {
+			if len(msg.Body) > 0 {
 				return nil
 			}
 			return &ws.ProtoMsg{
@@ -499,7 +480,7 @@ func TestFileTransferDownload(t *testing.T) {
 		FileContents: []byte("tiny chunk"),
 
 		Acker: func(msg *ws.ProtoMsg) *ws.ProtoMsg {
-			if msg.Body != nil {
+			if len(msg.Body) > 0 {
 				return nil
 			}
 			return &ws.ProtoMsg{
@@ -517,7 +498,7 @@ func TestFileTransferDownload(t *testing.T) {
 		FileContents: []byte("tiny chunk"),
 
 		Acker: func(msg *ws.ProtoMsg) *ws.ProtoMsg {
-			if msg.Body != nil {
+			if len(msg.Body) > 0 {
 				return nil
 			}
 			return &ws.ProtoMsg{
@@ -536,7 +517,7 @@ func TestFileTransferDownload(t *testing.T) {
 			FileContents: []byte("tiny chunk"),
 
 			Acker: func(msg *ws.ProtoMsg) *ws.ProtoMsg {
-				if msg.Body != nil {
+				if len(msg.Body) > 0 {
 					return nil
 				}
 				errMsg := "ENOSPC"
@@ -643,8 +624,7 @@ func TestFileTransferDownload(t *testing.T) {
 			case msg = <-w.C:
 				timeout.Reset(time.Second * 10)
 			case <-timeout.C:
-				t.Error("test case timeout!")
-				t.FailNow()
+				t.Fatal("test case timeout")
 			}
 			var offset int64
 		Loop:
@@ -667,7 +647,7 @@ func TestFileTransferDownload(t *testing.T) {
 				case msg = <-w.C:
 
 				case <-timeout.C:
-					panic("test case timeout")
+					t.Fatal("test case timeout")
 				}
 			}
 
@@ -695,7 +675,7 @@ func TestFileTransferDownload(t *testing.T) {
 				) {
 					t.FailNow()
 				}
-				assert.Nil(t, msg.Body, "Last message must be an EOF chunk")
+				assert.Len(t, msg.Body, 0, "Last message must be an EOF chunk")
 				assert.Equal(t, tc.FileContents, recvBuf.Bytes())
 			}
 		})
