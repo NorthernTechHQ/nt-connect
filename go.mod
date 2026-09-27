@@ -6,7 +6,7 @@ require (
 	github.com/coder/websocket v1.8.15
 	github.com/creack/pty v1.1.24
 	github.com/go-ozzo/ozzo-validation/v4 v4.4.1
-	github.com/mendersoftware/go-lib-micro v0.0.0-20260827124505-f0e30875a77d
+	github.com/mendersoftware/go-lib-micro v0.0.0-20260924120548-79a6e6f20ef9
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.10.2

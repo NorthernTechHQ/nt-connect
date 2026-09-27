@@ -9,6 +9,8 @@ github.com/go-ozzo/ozzo-validation/v4 v4.4.1 h1:AQ3X8zHnXEuNE04pyc1H/nmIlroNjgZ7
 github.com/go-ozzo/ozzo-validation/v4 v4.4.1/go.mod h1:4ZtPNefSnNq39wjL+2We8y2ysqEX/S4D5mPybufHd7Y=
 github.com/mendersoftware/go-lib-micro v0.0.0-20260827124505-f0e30875a77d h1:TLEGADkVI6oTv3JW2FtvNih5eQpiOAj3JSJOwCJWVoc=
 github.com/mendersoftware/go-lib-micro v0.0.0-20260827124505-f0e30875a77d/go.mod h1:CzlSoiOQvmyxmGnSmT7uaIYTT1SQXYD0jjX+nl/X6Ms=
+github.com/mendersoftware/go-lib-micro v0.0.0-20260924120548-79a6e6f20ef9 h1:EUE5LAIuy2lpz3Bt9nTV3i81nlYgOQFWiEXPWZgz/Pw=
+github.com/mendersoftware/go-lib-micro v0.0.0-20260924120548-79a6e6f20ef9/go.mod h1:CzlSoiOQvmyxmGnSmT7uaIYTT1SQXYD0jjX+nl/X6Ms=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
