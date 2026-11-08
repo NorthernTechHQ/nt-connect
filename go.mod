@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/coder/websocket v1.8.15
 	github.com/creack/pty v1.1.24
-	github.com/go-ozzo/ozzo-validation/v4 v4.4.1
+	github.com/go-ozzo/ozzo-validation/v4 v4.5.0
 	github.com/mendersoftware/go-lib-micro v0.0.0-20260924120548-79a6e6f20ef9
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
