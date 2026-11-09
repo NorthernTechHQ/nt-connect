@@ -7,6 +7,8 @@ github.com/creack/pty v1.1.24/go.mod h1:08sCNb52WyoAwi2QDyzUCTgcvVFhUzewun7wtTfv
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-ozzo/ozzo-validation/v4 v4.4.1 h1:AQ3X8zHnXEuNE04pyc1H/nmIlroNjgZ7hcY7Xv/IgH8=
 github.com/go-ozzo/ozzo-validation/v4 v4.4.1/go.mod h1:4ZtPNefSnNq39wjL+2We8y2ysqEX/S4D5mPybufHd7Y=
+github.com/go-ozzo/ozzo-validation/v4 v4.5.0 h1:ay87N+5vSsdBVMtEAUtP76cJL/I6Yjmhvz+ekAlBTV0=
+github.com/go-ozzo/ozzo-validation/v4 v4.5.0/go.mod h1:zGDObjgC33S3GGdAiAVanGqqA3MH5HdlxH9wPeCL88E=
 github.com/mendersoftware/go-lib-micro v0.0.0-20260827124505-f0e30875a77d h1:TLEGADkVI6oTv3JW2FtvNih5eQpiOAj3JSJOwCJWVoc=
 github.com/mendersoftware/go-lib-micro v0.0.0-20260827124505-f0e30875a77d/go.mod h1:CzlSoiOQvmyxmGnSmT7uaIYTT1SQXYD0jjX+nl/X6Ms=
 github.com/mendersoftware/go-lib-micro v0.0.0-20260924120548-79a6e6f20ef9 h1:EUE5LAIuy2lpz3Bt9nTV3i81nlYgOQFWiEXPWZgz/Pw=
