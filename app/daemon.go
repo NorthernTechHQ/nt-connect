@@ -80,6 +80,7 @@ func newDaemon(conf *config.NTConnectConfig) *Daemon {
 	}
 	if !conf.FileTransfer.Disable {
 		routes[ws.ProtoTypeFileTransfer] = session.FileTransfer(conf.Chroot, conf.Limits)
+		routes[ws.ProtoTypeFileTransferV2] = session.FileTransfer(conf.Chroot, conf.Limits)
 	}
 	if !conf.PortForward.Disable {
 		routes[ws.ProtoTypePortForward] = session.PortForward()

@@ -20,4 +20,5 @@ require (
 	github.com/stretchr/objx v0.5.3 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
